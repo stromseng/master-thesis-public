@@ -1,0 +1,32 @@
+[
+  {
+    "name": "userkeyhead",
+    "value": "YOUR_VALUE_HERE",
+    "domain": ".shititong.cn",
+    "path": "/"
+  },
+  {
+    "name": "userkeyid",
+    "value": "YOUR_VALUE_HERE",
+    "domain": ".shititong.cn",
+    "path": "/"
+  },
+  {
+    "name": "userkeyname",
+    "value": "YOUR_VALUE_HERE",
+    "domain": ".shititong.cn",
+    "path": "/"
+  },
+  {
+    "name": "usermapper",
+    "value": "YOUR_VALUE_HERE",
+    "domain": ".shititong.cn",
+    "path": "/"
+  },
+  {
+    "name": "usertoken",
+    "value": "YOUR_VALUE_HERE",
+    "domain": ".shititong.cn",
+    "path": "/"
+  }
+]

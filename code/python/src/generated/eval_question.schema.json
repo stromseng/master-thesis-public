@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$defs": {
+    "QuestionGroup": {
+      "type": "object",
+      "required": [
+        "questions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "metadata": {
+          "$id": "/schemas/unknown",
+          "title": "unknown"
+        },
+        "source": {
+          "type": "object",
+          "required": [],
+          "properties": {},
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "questionText",
+              "metadata",
+              "options",
+              "correctOptionIds"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique question identifier. For Raynor questions, use the `raynor-<number>` format.",
+                "title": "question-id",
+                "examples": [
+                  "raynor-4285"
+                ]
+              },
+              "questionText": {
+                "type": "string"
+              },
+              "metadata": {
+                "$id": "/schemas/unknown",
+                "title": "unknown"
+              },
+              "images": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/QuestionImage"
+                }
+              },
+              "source": {
+                "type": "object",
+                "required": [],
+                "properties": {},
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "options": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/QuestionImage"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "correctOptionIds": {
+                "$ref": "#/$defs/NonEmptyOptionIds"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "QuestionImage": {
+      "type": "object",
+      "required": [
+        "uri"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "NonEmptyOptionIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/QuestionGroup"
+  }
+}

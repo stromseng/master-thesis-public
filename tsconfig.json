@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    // Environment setup & latest features
+    "lib": ["ESNext", "DOM", "DOM.Iterable"], // Type definitions for ESNext APIs, browser DOM, and iterable DOM collections
+    "target": "ESNext", // Emit modern JS syntax without downleveling
+    "module": "Preserve", // Keep original module syntax (ESM/CJS) for bundler to handle
+    "moduleDetection": "force", // Treat all files as modules even without import/export
+    "jsx": "react-jsx", // Use React 17+ automatic JSX transform (no React import needed)
+    "allowJs": true, // Allow importing .js files alongside .ts
+
+    // Bundler mode
+    "moduleResolution": "bundler", // Use bundler-style resolution (supports package.json exports, no extensions required)
+    "allowImportingTsExtensions": true, // Allow imports with .ts/.tsx extensions (requires noEmit)
+    "verbatimModuleSyntax": true, // Enforce explicit type-only imports/exports (import type {...})
+    "noEmit": true, // Don't emit JS files - let bundler handle compilation
+
+    // Best practices
+    "strict": true, // Enable all strict type-checking options
+    "skipLibCheck": true, // Skip type checking of .d.ts files for faster builds
+    "noFallthroughCasesInSwitch": true, // Error on switch case fallthrough without explicit break/return
+    "noUncheckedIndexedAccess": true, // Add undefined to index signature results (arr[0] is T | undefined)
+    "noImplicitOverride": true, // Require explicit 'override' keyword when overriding base class members
+    "exactOptionalPropertyTypes": false, // Allow assigning undefined to optional properties (usually true for Effect, but python api gen causes errors)
+
+    // Some stricter flags
+    "noUnusedLocals": true, // error on unused local variables
+    "noUnusedParameters": true, // error on unused function parameters
+    "noPropertyAccessFromIndexSignature": false, // Allow obj.prop syntax for index signatures (vs requiring obj["prop"])
+
+    // Effect Language Service
+    "plugins": [
+      {
+        "name": "@effect/language-service" // Provides Effect-specific IDE features like pipe completions and error lens
+      }
+    ]
+  }
+}

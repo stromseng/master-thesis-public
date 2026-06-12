@@ -1,0 +1,51 @@
+[project]
+name = "thesis"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "beautifulsoup4>=4.13.5",
+  "chonkie[all]>=1.5.4",
+  "faiss-cpu>=1.7.0; sys_platform == 'darwin'",
+  "faiss-gpu-cu12>=1.7.0; sys_platform == 'linux' and platform_machine == 'x86_64'",
+  "fabric>=3.2.2",
+  "fastembed>=0.4.0",
+  "fastapi>=0.115.8",
+  "humanize>=4.13.0",
+  "inquirerpy>=0.3.4",
+  "invoke>=2.2.0",
+  "langchain-core>=0.3.76",
+  "langchain-text-splitters>=0.3.11",
+  "marker-pdf>=1.10.0",
+  "paddleocr[doc-parser]>=3.4.0",
+  "paddlepaddle>=3.3.0",
+  "paramiko>=4.0.0",
+  "playwright>=1.55.0",
+  "pymupdf>=1.26.7",
+  "pypdf>=6.0.0",
+  "python-docx>=1.2.0",
+  "python-dotenv>=1.1.1",
+  "qdrant-client>=1.12.0",
+  "rapidfuzz>=3.0.0",
+  "requests>=2.32.5",
+  "rich>=14.1.0",
+  "torch>=2.0.0",
+  "tqdm>=4.67.1",
+  "typer>=0.12.0",
+  "uvicorn>=0.34.0",
+]
+
+[tool.uv]
+prerelease = "allow"
+required-environments = [
+  "sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "sys_platform == 'linux' and platform_machine == 'aarch64'",
+  "sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
+override-dependencies = ["onnxruntime>=1.20,<1.24.0.dev0"]
+
+[dependency-groups]
+dev = ["basedpyright>=1.37.1", "pytest>=9.0.2", "ruff>=0.14.14", "ty>=0.0.1a20"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

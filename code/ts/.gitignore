@@ -1,0 +1,53 @@
+# dependencies (bun install)
+node_modules
+
+# output
+out
+dist
+*.tgz
+
+# code coverage
+coverage
+*.lcov
+
+# logs
+logs
+_.log
+report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# caches
+.eslintcache
+.cache
+*.tsbuildinfo
+
+# IntelliJ based IDEs
+.idea
+
+# Finder (MacOS) folder config
+.DS_Store
+
+
+local.db
+local.db-shm
+local.db-wal
+
+
+qdrant_storage/**
+
+# Shititong scraper
+scripts/shititong/cookies.json
+output/
+
+# Batch eval config (user-specific, use batch.config.template.json5 as reference)
+evals/batch.config.json5
+evals/batch.config.json
+
+# Pipeline config (user-specific, use pipeline.config.template.json5 as reference)
+evals/pipeline.config.json5

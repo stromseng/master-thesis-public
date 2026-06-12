@@ -1,0 +1,186 @@
+// Pipeline orchestrator configuration.
+// Copy this file to get started:
+//
+//   cp evals/pipeline.config.template.json5 evals/pipeline.config.json5
+//
+// Then configure your model runs. jobId is auto-detected from SLURM if omitted.
+//
+// Deploy to the remote server (from code/ts/):
+//
+//   scp evals/pipeline.config.json5 example-host:~/master-thesis/code/ts/evals/pipeline.config.json5
+//
+// Prerequisites:
+//   1. A running SLURM job with GPUs (auto-detected, or set jobId explicitly)
+//   2. The qdrant embedding DB running (`just dev-python`) if running RAG evals
+//
+// Usage:
+//   bun evals/run_pipeline.ts
+//   bun evals/run_pipeline.ts --dry-run
+//   bun evals/run_pipeline.ts --config path/to/custom.json5
+//
+// The orchestrator loops through each run entry:
+//   stop server → serve eval model → SSH tunnel → write batch config → run batch → repeat
+//
+// Open-ended eval/judge split:
+//   - Use `evalModel` for answer generation and `judgeModel` for judging.
+//   - If `judgeModel` is local on the same job, the pipeline runs experiment-only,
+//     stops/restarts the server with the judge model, then runs evaluate-only.
+//   - If `judgeModel.provider` is "litellm", no server lifecycle is needed for judging.
+//   - Use `{ model, endpoints: [...] }` to route one logical model across multiple
+//     LiteLLM/vLLM-compatible endpoints, matching the batch config router shape.
+//   - Legacy `model` remains supported as an alias for `evalModel`.
+{
+  // SLURM job ID — auto-detected if omitted, or set explicitly.
+  // NOTE: auto-detect fails when multiple GPU jobs are running, so pin
+  // explicitly whenever you have more than one active allocation.
+  // jobId: "12345",
+
+  // Local port for SSH tunnel (default: 8000)
+  // localPort: 8000,
+
+  // Each entry serves one eval model and runs its scripts as a batch.
+  // The model is stopped and replaced between entries, and between eval/judge
+  // phases when a local judge model is configured.
+
+  // NOTES on serveArgs:
+  //   - Qwen3/3.5 models need: serveArgs: "--reasoning-parser qwen3"
+  //   - Gemma 4 models need:   serveArgs: "--reasoning-parser gemma4"
+  //     (Gemma 4 also requires client-side enable_thinking=True in chat_template_kwargs
+  //      for thinking mode. Without it, the model answers directly without chain-of-thought.)
+  //   - Base models (no chat template) need: serveArgs: "--chat-template ~/.config/idun/chat-templates/llama3.jinja"
+  //     (Base models like meta-llama/Llama-3.1-70B don't have a chat template, so vLLM can't serve /v1/chat/completions without one)
+  //
+  // Resume an existing experiment (only runs missing/errored questions).
+  // The experiment ID is the base64-encoded Phoenix experiment ID (e.g. from
+  // http://example.com:6006/projects). Use this when a
+  // run was interrupted — Phoenix will skip examples that already succeeded:
+  //   {
+  //     script: "evals/shititong/zh_text_open_ended.ts",
+  //     env: { RESUME_EXPERIMENT_ID: "RXhwZXJpbWVudDo0OTQ=" },
+  //   }
+  //
+  // MAX_TASK_RETRIES caps all retry mechanisms (rate-limit, connectivity,
+  // exponential backoff). Without it, rate-limit and connectivity errors retry
+  // indefinitely. Set it to force stuck questions to error out so Phoenix can
+  // compute accuracy on the rest:
+  //   {
+  //     script: "evals/pei2024/rag_zh.eval.ts",
+  //     env: { RESUME_EXPERIMENT_ID: "...", MAX_TASK_RETRIES: "2" },
+  //   }
+
+  localPort: 8002,
+  runs: [
+    // --- Split eval/judge example for open-ended evals ---
+    // {
+    //   evalModel: {
+    //     model: "Qwen/Qwen3.5-27B",
+    //     serveArgs: "--reasoning-parser qwen3",
+    //     localPort: 8002,
+    //   },
+    //   judgeModel: {
+    //     provider: "litellm",
+    //     model: "Qwen/Qwen3.5-122B-A10B-FP8",
+    //   },
+    //   scripts: [
+    //     "evals/pei2024/uk_open_ended.ts",
+    //     "evals/pei2024/zh_open_ended.ts",
+    //   ],
+    //   concurrency: 32,
+    // },
+    //
+    // Same-job local judge model:
+    // {
+    //   evalModel: { model: "Qwen/Qwen3.5-27B", localPort: 8002, serveArgs: "--reasoning-parser qwen3" },
+    //   judgeModel: { provider: "vllm", model: "Qwen/Qwen3.5-122B-A10B-FP8", localPort: 8002, serveArgs: "--reasoning-parser qwen3" },
+    //   scripts: ["evals/pei2024/uk_open_ended.ts"],
+    // },
+    //
+    // Routed/distributed endpoints for the same logical judge model:
+    // {
+    //   evalModel: {
+    //     model: "Qwen/Qwen3.5-27B",
+    //     endpoints: [
+    //       { provider: "vllm", jobId: "12345", localPort: 8002, serveArgs: "--reasoning-parser qwen3", maxConcurrency: 100 },
+    //       { provider: "litellm", maxConcurrency: 2 },
+    //     ],
+    //   },
+    //   judgeModel: {
+    //     model: "Qwen/Qwen3.5-122B-A10B-FP8",
+    //     endpoints: [
+    //       { provider: "vllm", jobId: "23456", localPort: 8009, serveArgs: "--reasoning-parser qwen3", maxConcurrency: 100 },
+    //       { provider: "litellm", maxConcurrency: 2 },
+    //     ],
+    //   },
+    //   scripts: ["evals/pei2024/uk_open_ended.ts"],
+    // },
+
+    // --- Qwen example (reasoning on by default in chat template) ---
+    {
+      evalModel: {
+        model: "Qwen/Qwen3.5-4B",
+        serveArgs: "--reasoning-parser qwen3 --max-model-len 16384 --trust-remote-code --enforce-eager",
+        maxConcurrency: 100,
+      },
+      concurrency: 100,
+      scripts: [
+        {
+          script: "evals/shititong/en_vision.ts",
+          env: { RESUME_EXPERIMENT_ID: "RXhwZXJpbWVudDo2NTE=" },
+        },
+        {
+          script: "evals/shititong/zh_vision.ts",
+          env: { RESUME_EXPERIMENT_ID: "RXhwZXJpbWVudDo2NTI=" },
+        },
+        "evals/navreas/navreas.eval.ts",
+        {
+          script: "evals/raynor/basic_multimodal.ts",
+          env: { RESUME_EXPERIMENT_ID: "RXhwZXJpbWVudDo2NTY=" },
+        },
+        "evals/us_coast_guard/basic_multimodal.ts",
+        // {
+        //   script: "evals/us_coast_guard/basic_multimodal.ts",
+        //   env: { RESUME_EXPERIMENT_ID: "=" },
+        // },
+      ],
+    },
+
+    // --- Gemma 4 example (needs --reasoning-parser gemma4 for thinking) ---
+    {
+      model: "google/gemma-4-31B-it",
+      serveArgs: "--reasoning-parser gemma4",
+      scripts: [
+        "evals/pei2024/uk_theory_test.ts",
+        "evals/pei2024/zh_theory_test.ts",
+        "evals/us_coast_guard/basic.ts",
+        "evals/raynor/basic.ts",
+        "evals/shititong/en_text.ts",
+        "evals/shititong/zh_text.ts",
+        "evals/crew/basic.ts",
+        "evals/navreas/navreas.eval.ts",
+        {
+          script: "evals/pei2024/rag.eval.ts",
+          env: { DENSE_METHOD: "litellm", CHUNKING_METHOD: "recursive", RETRIEVAL_LIMIT: "5" },
+        },
+        {
+          script: "evals/us_coast_guard/rag.eval.ts",
+          env: { DENSE_METHOD: "litellm", CHUNKING_METHOD: "recursive", RETRIEVAL_LIMIT: "5" },
+        },
+        {
+          script: "evals/crew/rag.eval.ts",
+          env: { DENSE_METHOD: "litellm", CHUNKING_METHOD: "recursive", RETRIEVAL_LIMIT: "5" },
+        },
+        "evals/us_coast_guard/basic_multimodal.ts",
+        "evals/raynor/basic_multimodal.ts",
+        "evals/shititong/en_vision.ts",
+        "evals/shititong/zh_vision.ts",
+      ],
+    },
+
+    // --- Base model example (needs explicit chat template) ---
+    // {
+    //   model: "meta-llama/Llama-3.1-70B",
+    //   serveArgs: "--chat-template ~/.config/idun/chat-templates/llama3.jinja",
+    //   scripts: [ ... ],
+    // },
+  ],
+}

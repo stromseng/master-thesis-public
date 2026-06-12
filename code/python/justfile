@@ -1,0 +1,26 @@
+# Lint with ruff
+lint:
+    uv run ruff check .
+
+# Lint and fix with ruff
+lint-fix:
+    uv run ruff check --fix .
+
+# Format with ruff
+[working-directory: './']
+fmt:
+    uv run ruff format .
+
+# Check formatting with ruff
+fmt-check:
+    uv run ruff format --check .
+
+# Type check with ty
+typecheck:
+    uv run ty check .
+
+# Run all checks (lint + format check + typecheck)
+check: lint fmt-check typecheck
+
+# Fix all auto-fixable issues
+fix: lint-fix fmt

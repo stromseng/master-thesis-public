@@ -1,0 +1,33 @@
+# Type check with tsc
+typecheck:
+    bun run typecheck
+
+# Lint with oxlint
+lint:
+    bun run lint
+
+# Lint and fix with oxlint
+lint-fix:
+    bun run lint:fix
+
+# Format with oxfmt
+fmt:
+    bun run fmt
+
+# Check formatting with oxfmt
+fmt-check:
+    bun run fmt:check
+
+# Run tests
+test:
+    bun run test
+
+# Run all checks (lint + format check + typecheck)
+check: lint fmt-check typecheck
+
+# Fix all auto-fixable issues
+fix: lint-fix fmt
+
+# Run CI checks
+ci:
+    bun run ci

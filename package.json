@@ -1,0 +1,31 @@
+{
+  "name": "master-thesis",
+  "private": true,
+  "workspaces": [
+    "code/ts"
+  ],
+  "scripts": {
+    "prepare": "effect-language-service patch",
+    "typecheck": "bun run --cwd code/ts typecheck",
+    "lint": "bun run --cwd code/ts lint",
+    "lint:fix": "bun run --cwd code/ts lint:fix",
+    "fmt": "bun run --cwd code/ts fmt",
+    "fmt:check": "bun run --cwd code/ts fmt:check",
+    "gen:question-pydantic": "bun run --cwd code/ts gen:question-pydantic",
+    "test": "bun run --cwd code/ts test",
+    "ci": "bun run --cwd code/ts ci"
+  },
+  "dependencies": {
+    "@effect/language-service": "^0.73.1"
+  },
+  "devDependencies": {
+    "lint-staged": "^16.3.1",
+    "oxfmt": "^0.24.0",
+    "oxlint": "^1.50.0",
+    "typescript": "^5.9.3"
+  },
+  "lint-staged": {
+    "code/ts/**/*.{ts,tsx,js,jsx}": "oxfmt --no-error-on-unmatched-pattern",
+    "code/python/**/*.py": "uv run --project code/python ruff format --config code/python/pyproject.toml"
+  }
+}

@@ -1,0 +1,31 @@
+services:
+  phoenix:
+    image: arizephoenix/phoenix:latest # Must be greater than 4.0 version to work
+    ports:
+      - 6006:6006 # PHOENIX_PORT
+      - 4317:4317 # PHOENIX_GRPC_PORT
+      # - 4318:4318  # PHOENIX_HTTP_PORT
+      # - 9090:9090  # [Optional] PROMETHEUS PORT IF ENABLED
+    environment:
+      - PHOENIX_WORKING_DIR=/mnt/data
+    volumes:
+      - ./data/phoenix:/mnt/data # PHOENIX_WORKING_DIR
+    mem_limit: 22g
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - 6333:6333
+      - 6334:6334
+    volumes:
+      - ./data/qdrant:/qdrant/storage:z
+    mem_limit: 22g
+  api:
+    build:
+      context: .
+      dockerfile: code/python/Dockerfile
+    platform: linux/amd64
+    ports:
+      - 8001:8001
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+    mem_limit: 22g

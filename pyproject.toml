@@ -1,0 +1,48 @@
+[project]
+name = "master-thesis"
+version = "0.1.0"
+description = "Master thesis monorepo"
+requires-python = ">=3.11"
+
+[tool.uv.workspace]
+members = [
+    "code/python",
+]
+
+[tool.basedpyright]
+venvPath = "./code/python"
+venv = ".venv"
+pythonVersion = "3.12"
+include = ["code/python/src", "code/python/scripts", "code/python/tests"]
+exclude = [
+    "code/python/src/deprecated",
+    "code/python/src/navreas",
+    "code/python/src/examscrapers",
+    "code/python/src/yaak",
+    "code/python/scripts/idun",
+]
+
+[tool.ty.src]
+exclude = [
+    "data",
+    "code/python/src/deprecated",
+    "code/python/src/subrepos",
+    "code/python/src/navreas",
+    "code/python/src/examscrapers",
+    "code/python/src/yaak",
+    "code/python/typings",
+    "code/python/scripts/idun",
+]
+
+[tool.ruff]
+src = ["code/python/src", "code/python/scripts", "code/python/tests"]
+extend-exclude = [
+    "data",
+    "code/python/src/deprecated",
+    "code/python/src/navreas",
+    "code/python/src/subrepos",
+    "code/python/src/examscrapers",
+    "code/python/src/yaak",
+    "code/python/typings",
+    "code/python/scripts/idun",
+]

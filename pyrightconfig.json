@@ -1,0 +1,16 @@
+{
+  "include": ["code/python"],
+  "executionEnvironments": [
+    {
+      "root": "code/python",
+      "extraPaths": ["src"],
+    },
+  ],
+  "exclude": [
+    "code/python/src/deprecated",
+    "code/python/src/navreas",
+    "code/python/src/examscrapers",
+    "code/python/src/yaak",
+  ],
+  "reportCallInDefaultInitializer": "none",
+}

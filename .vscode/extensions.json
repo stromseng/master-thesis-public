@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "charliermarsh.ruff",
+    "astral-sh.ty",
+    "oxc.oxc-vscode",
+    "elijah-potter.harper"
+  ]
+}

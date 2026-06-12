@@ -1,0 +1,6 @@
+# Only send what the API Dockerfile needs
+*
+!pyproject.toml
+!uv.lock
+!code/python/pyproject.toml
+!code/python/src/

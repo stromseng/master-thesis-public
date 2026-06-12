@@ -1,0 +1,92 @@
+// Batch eval runner configuration.
+// Copy this file to get started:
+//
+//   cp evals/batch.config.template.json5 evals/batch.config.json5
+//
+// Then comment out or remove the models/scripts you don't need.
+//
+// Prerequisite: You need an SSH alias for the server, e.g. "ssh example-host"
+// See batch.config.template.json5 for refrence to all scripts
+//
+// Deploy to the remote server (from code/ts/):
+//
+//   scp evals/batch.config.json5 example-host:~/master-thesis/code/ts/evals/batch.config.json5
+//
+// Run with --dry-run to verify:  bun evals/run_batch.ts --dry-run
+{
+  models: [
+    // LiteLLM (IDUN HPC)
+    { provider: "litellm", model: "mistralai/Mistral-Large-3-675B-Instruct-2512-NVFP4" },
+    { provider: "litellm", model: "openai/gpt-oss-120b" },
+    { provider: "litellm", model: "zai-org/GLM-4.7-FP8" },
+    { provider: "litellm", model: "moonshotai/Kimi-K2.5" },
+    { provider: "litellm", model: "Qwen/Qwen3-Coder-30B-A3B-Instruct" },
+    { provider: "litellm", model: "NorwAI/NorwAI-Magistral2-34B-reasoning" },
+
+    // vLLM (local) — model is auto-detected if omitted (requires exactly one model on the endpoint)
+    { provider: "vllm", model: "your-org/your-model", port: "8000" },
+    // { provider: "vllm", port: "8003" },  // auto-detect model
+  ],
+
+  scripts: [
+    // crew
+    "evals/crew/basic.ts",
+    "evals/crew/basic-100.ts",
+
+    // navreas
+    "evals/navreas/navreas.eval.ts",
+
+    // pei2024
+    "evals/pei2024/uk_theory_test.ts",
+    "evals/pei2024/zh_theory_test.ts",
+
+    // raynor
+    "evals/raynor/basic.ts",
+    "evals/raynor/basic_multimodal.ts",
+
+    // shititong
+    "evals/shititong/en_text.ts",
+    "evals/shititong/en_vision.ts",
+    "evals/shititong/zh_text.ts",
+    "evals/shititong/zh_vision.ts",
+
+    // us_coast_guard
+    "evals/us_coast_guard/basic.ts",
+    "evals/us_coast_guard/basic_multimodal.ts",
+    "evals/us_coast_guard/take-10.ts",
+
+    // RAG evals — extra env vars are passed to the script process
+    {
+      script: "evals/us_coast_guard/rag.eval.ts",
+      env: { DENSE_METHOD: "litellm", CHUNKING_METHOD: "recursive", RETRIEVAL_LIMIT: "5" },
+    },
+    {
+      script: "evals/crew/rag.eval.ts",
+      env: { DENSE_METHOD: "litellm", CHUNKING_METHOD: "recursive", RETRIEVAL_LIMIT: "5" },
+    },
+    {
+      script: "evals/pei2024/rag.eval.ts",
+      env: { DENSE_METHOD: "litellm", CHUNKING_METHOD: "recursive", RETRIEVAL_LIMIT: "5" },
+    },
+  ],
+
+  // Execution mode:
+  //   "normal"          import each script's `run` effect (default)
+  //   "experiment-only" import each script's `runExperimentOnly`, then write IDs
+  //   "evaluate-only"   import each script's `runEvaluatorsOnly(experimentId)`
+  //
+  // The pipeline writes these fields automatically for eval/judge model
+  // switching. They can also be used manually for open-ended eval scripts.
+  // mode: "normal",
+  // experimentIdsOutput: "/tmp/open-ended-experiment-ids.json",
+  // experimentIds: {
+  //   "evals/pei2024/uk_open_ended.ts": "RXhwZXJpbWVudDoxMjM=",
+  // },
+
+  // When true, all models run concurrently (each on its own GPU),
+  // but each model still runs its scripts sequentially.
+  parallel: false,
+
+  // Max concurrent eval requests per script. Sets EVAL_CONCURRENCY env var.
+  // concurrency: 5,
+}
