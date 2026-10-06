@@ -2,7 +2,7 @@
 
 Master's thesis in Informatics, Norwegian University of Science and Technology (NTNU), 2026.
 
-**[Read the full thesis on NTNU Open](https://ntnuopen.ntnu.no/)** *(link available after publication)*
+**[Read the full thesis on NTNU Open](https://nva.sikt.no/registration/01a10fc582b7-8b2ca450-a27f-4cf0-8adc-178b96bc6d3c)**
 
 This thesis evaluates whether current large language models can answer maritime domain questions, and whether retrieval-augmented generation (RAG) improves that performance. The evaluation suite contains 139,266 question instances across 21 datasets and derived variants: 79,688 multiple-choice questions and 59,578 derived open-ended questions in English and Mandarin Chinese. The models span 4B to 1T+ total parameters and cover dense and mixture-of-experts architectures.
 
@@ -32,7 +32,7 @@ Built with TypeScript (Bun, Effect-TS) and Python (FastAPI, uv), orchestrated vi
 - **RAG gains are real but bounded**: across the three English-primary RAG-tested datasets, retrieval improves 28 of 39 model-dataset pairs with an average gain of +2.2 percentage points; the largest individual gain is +14.0pp
 - **Cross-lingual RAG works in a narrow matched setting**: retrieval from an English-only corpus improves Chinese PEI2024 performance by +6.1pp on average, where the Chinese questions test the same international regulatory content
 - **Scaling and specialization**: Llamarine improves strongly over its Llama 3.1 70B base model, but remains below newer general-purpose models; this is evidence about one QLoRA fine-tuning setup, not all fine-tuning
-- **Cost and model size**: within the Qwen 3.5 family, MCQ returns flatten beyond 27B parameters; MoE models can reach high accuracy with far fewer active parameters, but open-ended results prevent small-model MCQ pass marks from being treated as deployment readiness 
+- **Cost and model size**: within the Qwen 3.5 family, MCQ returns flatten beyond 27B parameters; MoE models can reach high accuracy with far fewer active parameters, but open-ended results prevent small-model MCQ pass marks from being treated as deployment readiness
 
 ## Models Evaluated
 
