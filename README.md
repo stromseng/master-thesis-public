@@ -32,7 +32,7 @@ Built with TypeScript (Bun, Effect-TS) and Python (FastAPI, uv), orchestrated vi
 - **RAG gains are real but bounded**: across the three English-primary RAG-tested datasets, retrieval improves 28 of 39 model-dataset pairs with an average gain of +2.2 percentage points; the largest individual gain is +14.0pp
 - **Cross-lingual RAG works in a narrow matched setting**: retrieval from an English-only corpus improves Chinese PEI2024 performance by +6.1pp on average, where the Chinese questions test the same international regulatory content
 - **Scaling and specialization**: Llamarine improves strongly over its Llama 3.1 70B base model, but remains below newer general-purpose models; this is evidence about one QLoRA fine-tuning setup, not all fine-tuning
-- **Cost and model size**: within the Qwen 3.5 family, MCQ returns flatten beyond 27B parameters; MoE models can reach high accuracy with far fewer active parameters, but open-ended results prevent small-model MCQ pass marks from being treated as deployment readiness
+- **Cost and model size**: within the Qwen 3.5 family, MCQ returns flatten beyond 27B parameters; MoE models can reach high accuracy with far fewer active parameters, but open-ended results prevent small-model MCQ pass marks from being treated as deployment readiness 
 
 ## Models Evaluated
 
